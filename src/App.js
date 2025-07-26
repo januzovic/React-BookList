@@ -89,8 +89,28 @@ function Form({ onAddBook }) {
 }
 
 function BookList({ books, onDeleteBook, onToggleRead }) {
-  let bookItems = books;
+  const [sortBy, setSortBy] = useState('input');
 
+  let bookItems;
+
+  if (sortBy === 'input') {
+    bookItems = books;
+  }
+  if (sortBy === 'title') {
+    bookItems = books.slice().sort((a, b) => a.title.localeCompare(b.title));
+  }
+  if (sortBy === 'title-2') {
+    bookItems = books.slice().sort((a, b) => b.title.localeCompare(a.title));
+  }
+  if (sortBy === 'read') {
+    bookItems = books.slice().sort((a, b) => Number(a.read) - Number(b.read));
+  }
+  if (sortBy === 'year') {
+    bookItems = books.slice().sort((a, b) => Number(b.year) - Number(a.year));
+  }
+  if (sortBy === 'year-2') {
+    bookItems = books.slice().sort((a, b) => Number(a.year) - Number(b.year));
+  }
   return (
     <div className='wrapper book-list-wrapper'>
       <h2>Books:</h2>
@@ -104,6 +124,14 @@ function BookList({ books, onDeleteBook, onToggleRead }) {
           />
         ))}
       </ul>
+      <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+        <option value='input'>Input Order</option>
+        <option value='title'>Title (A-Z)</option>
+        <option value='title-2'>Title (Z-A)</option>
+        <option value='read'>Read</option>
+        <option value='year'>Year (Newest)</option>
+        <option value='year-2'>Year (Oldest)</option>
+      </select>
     </div>
   );
 }
