@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './index.css';
 
 const Books = [
@@ -7,35 +8,79 @@ const Books = [
 ];
 
 export default function App() {
+  const [books, setBooks] = useState([]);
+
+  function handleAddBook(book) {
+    setBooks((books) => [...books, book]);
+  }
+
   return (
     <div className='App'>
-      <Form />
-      <BookList />
-      <Stats />
+      <Form onAddBook={handleAddBook} />
+      <BookList books={books} />
+      <Stats books={books} />
     </div>
   );
 }
 
-function Form() {
+function Form({ onAddBook }) {
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [year, setYear] = useState('');
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const newBook = {
+      title: title,
+      author: author,
+      year: year,
+      read: false,
+      id: Date.now(),
+    };
+    onAddBook(newBook);
+    console.log(newBook);
+
+    setTitle('');
+    setAuthor('');
+    setYear('');
+  }
   return (
     <div className='wrapper form-wrapper'>
       <h1>List of books you want to read</h1>
-      <form className='book-form'>
-        <input type='text' placeholder='Enter book title' />
-        <input type='text' placeholder='Enter book author' />
-        <input type='text' placeholder='Enter book year of publication' />
+      <form className='book-form' onSubmit={handleSubmit}>
+        <input
+          type='text'
+          placeholder='Enter book title'
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <input
+          type='text'
+          placeholder='Enter book author'
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+        />
+        <input
+          type='text'
+          placeholder='Enter book year of publication'
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+        />
         <button type='submit'>Add Book</button>
       </form>
     </div>
   );
 }
 
-function BookList() {
+function BookList({ books }) {
+  let bookItems = books;
+
   return (
     <div className='wrapper book-list-wrapper'>
       <h2>Books:</h2>
       <ul className='book-list'>
-        {Books.map((book) => (
+        {bookItems.map((book) => (
           <BookItem book={book} key={book.title} />
         ))}
       </ul>
@@ -63,10 +108,13 @@ function BookItem({ book }) {
   );
 }
 
-function Stats() {
+function Stats({ books }) {
   return (
     <footer className='footer'>
-      <p>You have read x books out of x books.</p>
+      <p>
+        You have read {books.filter((book) => book.read).length} books out of{' '}
+        {books.length} books.
+      </p>
     </footer>
   );
 }
