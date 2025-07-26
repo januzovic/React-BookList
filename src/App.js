@@ -14,10 +14,13 @@ export default function App() {
     setBooks((books) => [...books, book]);
   }
 
+  function handleDeleteBook(id) {
+    setBooks((books) => books.filter((book) => book.id !== id));
+  }
   return (
     <div className='App'>
       <Form onAddBook={handleAddBook} />
-      <BookList books={books} />
+      <BookList books={books} onDeleteBook={handleDeleteBook} />
       <Stats books={books} />
     </div>
   );
@@ -73,7 +76,7 @@ function Form({ onAddBook }) {
   );
 }
 
-function BookList({ books }) {
+function BookList({ books, onDeleteBook }) {
   let bookItems = books;
 
   return (
@@ -81,14 +84,14 @@ function BookList({ books }) {
       <h2>Books:</h2>
       <ul className='book-list'>
         {bookItems.map((book) => (
-          <BookItem book={book} key={book.title} />
+          <BookItem book={book} key={book.title} onDeleteBook={onDeleteBook} />
         ))}
       </ul>
     </div>
   );
 }
 
-function BookItem({ book }) {
+function BookItem({ book, onDeleteBook }) {
   return (
     <li className='book-item'>
       <input type='checkbox' />
@@ -102,7 +105,7 @@ function BookItem({ book }) {
         <p>
           Year of publication: <em>{book.year}</em>
         </p>
-        <button>Remove</button>
+        <button onClick={() => onDeleteBook(book.id)}>Remove</button>
       </div>
     </li>
   );
