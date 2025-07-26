@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './index.css';
 
 const Books = [
@@ -8,7 +8,14 @@ const Books = [
 ];
 
 export default function App() {
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState(() => {
+    const savedBooks = localStorage.getItem('books');
+    return savedBooks ? JSON.parse(savedBooks) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('books', JSON.stringify(books));
+  }, [books]);
 
   function handleAddBook(book) {
     setBooks((books) => [...books, book]);
@@ -163,10 +170,14 @@ function BookItem({ book, onDeleteBook, onToggleRead }) {
 function Stats({ books }) {
   return (
     <footer className='footer'>
-      <p>
-        You have read {books.filter((book) => book.read).length} books out of{' '}
-        {books.length} books.
-      </p>
+      {books.filter((book) => book.read).length === books.length ? (
+        <p>All books read!</p>
+      ) : (
+        <p>
+          You have read {books.filter((book) => book.read).length} books out of{' '}
+          {books.length} books.
+        </p>
+      )}
     </footer>
   );
 }
