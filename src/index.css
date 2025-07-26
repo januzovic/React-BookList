@@ -51,6 +51,17 @@ h1 {
   justify-content: start;
   align-items: start;
   gap: 1rem;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 1.5rem;
+  background: #c7ffd1;
+}
+.book-item.read {
+  background: #f9d788;
+}
+.book-item.read h3,
+.book-item.read p {
+  text-decoration: line-through;
 }
 .book-list {
   list-style: none;

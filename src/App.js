@@ -17,10 +17,22 @@ export default function App() {
   function handleDeleteBook(id) {
     setBooks((books) => books.filter((book) => book.id !== id));
   }
+
+  function handleToggleRead(id) {
+    setBooks((books) =>
+      books.map((book) =>
+        book.id === id ? { ...book, read: !book.read } : book
+      )
+    );
+  }
   return (
     <div className='App'>
       <Form onAddBook={handleAddBook} />
-      <BookList books={books} onDeleteBook={handleDeleteBook} />
+      <BookList
+        books={books}
+        onDeleteBook={handleDeleteBook}
+        onToggleRead={handleToggleRead}
+      />
       <Stats books={books} />
     </div>
   );
@@ -76,7 +88,7 @@ function Form({ onAddBook }) {
   );
 }
 
-function BookList({ books, onDeleteBook }) {
+function BookList({ books, onDeleteBook, onToggleRead }) {
   let bookItems = books;
 
   return (
@@ -84,17 +96,26 @@ function BookList({ books, onDeleteBook }) {
       <h2>Books:</h2>
       <ul className='book-list'>
         {bookItems.map((book) => (
-          <BookItem book={book} key={book.title} onDeleteBook={onDeleteBook} />
+          <BookItem
+            book={book}
+            key={book.title}
+            onDeleteBook={onDeleteBook}
+            onToggleRead={onToggleRead}
+          />
         ))}
       </ul>
     </div>
   );
 }
 
-function BookItem({ book, onDeleteBook }) {
+function BookItem({ book, onDeleteBook, onToggleRead }) {
   return (
-    <li className='book-item'>
-      <input type='checkbox' />
+    <li className={`book-item ${book.read ? 'read' : ''}`}>
+      <input
+        type='checkbox'
+        checked={book.read}
+        onChange={() => onToggleRead(book.id)}
+      />
       <div className='book-wrapper'>
         <h3>
           Book name: <em>{book.title}</em>
