@@ -1,12 +1,6 @@
 import { useState, useEffect } from 'react';
 import './index.css';
 
-const Books = [
-  { title: '1984', author: 'George Orwell', year: 1949 },
-  { title: 'To Kill a Mockingbird', author: 'Harper Lee', year: 1960 },
-  { title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', year: 1925 },
-];
-
 export default function App() {
   const [books, setBooks] = useState(() => {
     const savedBooks = localStorage.getItem('books');
@@ -100,24 +94,48 @@ function BookList({ books, onDeleteBook, onToggleRead }) {
 
   let bookItems;
 
-  if (sortBy === 'input') {
-    bookItems = books;
+  if (books.length === 0) {
+    return (
+      <div className='wrapper book-list-wrapper'>
+        <p>No books added yet. Please enter a book that you want to read.</p>
+      </div>
+    );
   }
-  if (sortBy === 'title') {
-    bookItems = books.slice().sort((a, b) => a.title.localeCompare(b.title));
-  }
-  if (sortBy === 'title-2') {
-    bookItems = books.slice().sort((a, b) => b.title.localeCompare(a.title));
-  }
-  if (sortBy === 'read') {
-    bookItems = books.slice().sort((a, b) => Number(a.read) - Number(b.read));
-  }
-  if (sortBy === 'year') {
-    bookItems = books.slice().sort((a, b) => Number(b.year) - Number(a.year));
-  }
-  if (sortBy === 'year-2') {
-    bookItems = books.slice().sort((a, b) => Number(a.year) - Number(b.year));
-  }
+  // if (sortBy === 'input') {
+  //   bookItems = books;
+  // }
+  // if (sortBy === 'title') {
+  //   bookItems = books.slice().sort((a, b) => a.title.localeCompare(b.title));
+  // }
+  // if (sortBy === 'title-2') {
+  //   bookItems = books.slice().sort((a, b) => b.title.localeCompare(a.title));
+  // }
+  // if (sortBy === 'read') {
+  //   bookItems = books.slice().sort((a, b) => Number(a.read) - Number(b.read));
+  // }
+  // if (sortBy === 'year') {
+  //   bookItems = books.slice().sort((a, b) => Number(b.year) - Number(a.year));
+  // }
+  // if (sortBy === 'year-2') {
+  //   bookItems = books.slice().sort((a, b) => Number(a.year) - Number(b.year));
+  // }
+
+  const sortFunctions = {
+    input: (books) => books,
+    title: (books) =>
+      books.slice().sort((a, b) => a.title.localeCompare(b.title)),
+    titleSecond: (books) =>
+      books.slice().sort((a, b) => b.title.localeCompare(a.title)),
+    read: (books) =>
+      books.slice().sort((a, b) => Number(a.read) - Number(b.read)),
+    year: (books) =>
+      books.slice().sort((a, b) => Number(b.year) - Number(a.year)),
+    yearSecond: (books) =>
+      books.slice().sort((a, b) => Number(a.year) - Number(b.year)),
+  };
+
+  bookItems = sortFunctions[sortBy] ? sortFunctions[sortBy](books) : books;
+
   return (
     <div className='wrapper book-list-wrapper'>
       <h2>Books:</h2>
@@ -134,10 +152,10 @@ function BookList({ books, onDeleteBook, onToggleRead }) {
       <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
         <option value='input'>Input Order</option>
         <option value='title'>Title (A-Z)</option>
-        <option value='title-2'>Title (Z-A)</option>
+        <option value='titleSecond'>Title (Z-A)</option>
         <option value='read'>Read</option>
         <option value='year'>Year (Newest)</option>
-        <option value='year-2'>Year (Oldest)</option>
+        <option value='yearSecond'>Year (Oldest)</option>
       </select>
     </div>
   );
